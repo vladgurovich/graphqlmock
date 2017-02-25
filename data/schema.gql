@@ -1,0 +1,408 @@
+
+schema {
+  query: Query
+}
+
+type Query {
+  person(personId:ID): Person,
+  sponsor(sponsorId:ID): Sponsor,
+  sponsorship(sponsorshipId: ID): Sponsorship
+}
+type BaseModel {
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID
+}
+
+type BaseUser {
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID,
+  stormpathId: String,
+  role: ID,
+  email: String,
+  loginDomain: String,
+  #TODO Settings
+  pendingEmail: String,
+  pendingEmailTimeStamp: String,
+  inactivationTimeStamp: String,
+  #TODO updatedByuser
+}
+
+type BaseUserSummary {
+  name: String,
+  firstName: String,
+  middleName: String,
+  lastName: String,
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID,
+  stormpathId: String,
+  role: ID,
+  email: String,
+  loginDomain: String,
+  #TODO Settings
+  pendingEmail: String,
+  pendingEmailTimeStamp: String,
+  inactivationTimeStamp: String,
+}
+
+type Person {
+  primaryPhone: String,
+  primaryPhoneType: String,
+  firstName: String,
+  middleName: String,
+  lastName: String,
+  nameSuffix: String,
+  addresses: [PersonAddress],
+  dependents: [Person]
+  dateOfBirth: String,
+  #TODO ssn:
+  gender: String,
+  #TODO salary
+  planMemberships: [PlanMembership],
+  sponsorships: [Sponsorship]
+  cards: [Card],
+  #TODO spending accounts
+  tosAgreementDate: String
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID,
+  stormpathId: String,
+  role: ID,
+  email: String,
+  loginDomain: String,
+  #TODO Settings
+  pendingEmail: String,
+  pendingEmailTimeStamp: String,
+  inactivationTimeStamp: String
+
+}
+
+
+######   ADDRESS #########
+enum AddressType {
+  MAILING
+  PREFERRED
+  WORK
+}
+
+type Address {
+  streetAddressLine1: String!,
+  streetAddressLine2: String,
+  city: String!
+  stateCode: String,
+  countryCode: String,
+  postalCode: String!,
+  postalCodeSuffix: String,
+  latitude: Int,
+  longitude: Int,
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID
+}
+
+type PersonAddress {
+  address: Address,
+  type: AddressType,
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID
+}
+
+
+type Document {
+  name: String!,
+  path: String!,
+  contentLength: Int!,
+  contentType: String!,
+  documentType: String!
+  #url:String
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID
+}
+
+
+######   PLAN ########
+
+enum PlanType {
+  MEDICAL
+  DENTAL
+  VISION
+  PHARMACY
+}
+enum InsuranceType {
+  HMO
+  PPO
+  EPO
+  OTHER
+}
+type PlanGroup {
+  planGroupCode: String,
+  planType: PlanType,
+  sponsorId: ID,
+  networkPartnerId: ID,
+  #networkPartner NetworkPartner
+  isCHPlanGroup: Boolean,
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID
+}
+
+type PlanSubGroup {
+  planSubGroupCode: String,
+  partnerGroupId: String,
+  # planGroup planGroup
+  externalPlanCodes: [String],
+  externalPlanCode: String,
+  isInState: Boolean
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID
+
+}
+type Plan {
+  #TODO bundles PlanBundle
+  isHSACompatible: Boolean,
+  isIndemnity: Boolean,
+  sponsorId: ID! #??
+  groupId: ID! #??
+  name: String,
+  cardPrintingName: String,
+  # TODO networkParnter networkParnter
+  # TODO networkPartnerId
+  claimForms: [Document],
+  submittedPharmacyClaims: [Document],
+  startDate: String!,
+  endDate: String!,
+  type: PlanType,
+  insuranceType: InsuranceType,
+  isCHPlan: Boolean
+  importCode: String!
+  # externalPlanCodes
+  externalPlanCode: String,
+  # TODO stopLossPolicyId: ID,
+  # TODO stopLossPolicy StopLossPolicy
+  # TODO planFinancialInfo PlanFinancialInfo
+  # TODO benefitPartners [ProductPartner]
+  strenuusNetworkIds: [ID],
+  planDetail: String,
+  hsaContribution: Int,
+  planOrder: Int,
+  bestFor: String,
+  employeeContributionEstimation: Int,
+  employeeContributionDescription: String,
+  outOfPocketEstimation: Int,
+  isFSACompatible: Boolean,
+  isHRACompatible: Boolean,
+  isHiddenOnPlanCompare: Boolean,
+  color: String,
+  externalPlanUrl: String,
+  externalPlanDescriptionUrl: String,
+  planDetailFileName: String,
+  planDetailUpdateTimestamp: String,
+  shouldSendRegistrationEmail: Boolean,
+  #TODO planBeaconNames PlanBeaconName
+  providerSupportPhone: String,
+  summaryOfBenefitsAndCoverage: Document,
+  externalPlanInformation: Document,
+  planDescription: Document,
+  #TODO restrictedToStates JsonArray
+  beaconGroupCode: String,
+  beaconName: String,
+  networkName: String
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID
+
+}
+
+type PlanMembership {
+  personID: ID,
+  subscriberID: ID,
+  planId: ID!,
+  plan: Plan!,
+  startReason: String,
+  endReason: String,
+  startDate: String,
+  endDate: String,
+  previousEndDate: String
+  memberId: ID,
+  isCobra: Boolean,
+  isValid: Boolean,
+  memberIdSerialNumber: String,
+  omissionDate: String,
+  cobraCoverageStartDate: String,
+  mostRecentStartDate: String,
+  planSubGroupId: ID,
+  planSubGroup: PlanSubGroup,
+  receivedCoverageTier: String,
+  coverageTier: String,
+  defaultEndDate: String!,
+  memberIdPrefix: String,
+  relationshiptType: String
+  subscriber: BaseUserSummary,
+  bscREinstatementDate: String,
+  sponsorshipId: ID,
+  hasMetDeductible: Boolean
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID
+
+
+}
+
+
+######   SPONSOR #########
+
+type Sponsor {
+  urlName: String,
+  passCode: String,
+  name: String,
+  legalName: String,
+  address: Address,
+  sponsorCode: String,
+  emailDomain: String,
+  planGroups: [PlanGroup],
+  plans: [Plan],
+  #TODO externalEnrollmentSystems: [ExternalEnrollmentSystem],
+  #TODO stopLossPolicies: [StopLossPolicy]
+  employerPortalUrl: String,
+  tollFreeNumber: String,
+  clientSuccessManager: BaseUser,
+  clientSuccessManagerId: ID,
+  #TODO groups: [SponsorGroup]
+  beaconGroupCode: String,
+  alegeusGroupCode: String,
+  x509cert: String,
+  taxId: String,
+  latestEnrollmentDate: String,
+  #TODO sponsorFinancialInfo: SponsorFinancialInfo,
+  privacyPolicy: Document,
+  hipaaNotice: Document,
+  womenHealthNotice: Document,
+  fsaSPD: Document,
+  dcfsaSPD: Document,
+  hraSPD: Document,
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID
+
+
+}
+enum SponsorshipType {
+  SUBSCRIBER
+  DEPENDENT
+}
+enum SponsorshipStatus {
+  FUTURE
+  ACTIVE
+  TERMINATED
+  INDETERMINATE
+  ERRROR
+}
+type Sponsorship {
+  personID: ID,
+  sponsor: Sponsor,
+  #TODO lifeEvents: [LifeEvent]
+  sponsoID: ID,
+  hireDate: String,
+  terminationDate: String,
+  sponsorPersonId: ID,
+  #sponsorPersonAttributes: [JsonObject],
+  sponsorshipType: SponsorshipType,
+  email: String,
+  secondaryEmail: String,
+  primaryPhone: String,
+  primaryPhoneType: String,
+  secondaryPhone: String,
+  secondaryPhoneType: String,
+  cobraEligibilityStartDate: String,
+  cobraEligibilityEndDate: String,
+  subsidiary: String
+  #TODO sponsorshipChangeTrackers: [SponsorshipChangeTrackers]
+  sponsorshipStatus: SponsorshipStatus,
+  subscriber: BaseUserSummary,
+  id: ID!,
+  updateTimestamp: String!,
+  createTimeStamp: String!,
+  updatedByUserId: ID
+
+}
+
+enum CardType {
+ MEDICAL_PHARMACY
+ DENTAL_VISION
+ DENTAL
+ VISION
+}
+
+type Card {
+  subscriber: Person
+  sponsor: Sponsor
+  type: CardType,
+  dentistsCall: String,
+  dentalGroupId: String,
+  dentalLogo: String,
+  dentalPartnerId: ID,
+  dentalPlanName: String,
+  optometristsCall: String,
+  visionGroupId: String,
+  visionPlanName: String,
+  caProvidersCall: String,
+  isEpo: Boolean,
+  isInState: Boolean,
+  memberId: String,
+  memberSupportPhone: String,
+  medicalPlanName: String,
+  medicalGroupId: String,
+  medicalTitle1: String,
+  medicalInfo1: String,
+  medicalTitle2: String,
+  medicalInfo2: String,
+  medicalTitle3: String,
+  medicalInfo3: String,
+  medicalTitle4: String,
+  medicalInfo4: String,
+  medicalTitle5: String,
+  medicalInfo5: String,
+  medicalPartnerId: ID,
+  outsideCaProvidersCall: String,
+  planCode: String,
+  pharmacyRxbin: String,
+  pharmacyRxpcn: String,
+  pharmacyRxgroup: String,
+  pharmacyNetworkName: String,
+  pharmacistsCall: String,
+  priorAuthCall: String,
+  providerClaimInquiryCall: String,
+  providerEligibilityCall: String,
+  providerLocatorCall: String,
+  travelCoverageCall: String
+}
+
+
+
+
+
+fragment CoverageCard on Plan {
+  id
+  name
+  networkName
+  type
+  isChPlan
+  externalPlanDescriptionUrl
+}
